@@ -1,0 +1,3 @@
+[submodule "extern/device-protocol"]
+	path = extern/device-protocol
+	url = https://github.com/RivelinRail/MeasurmentHeadProtocol.git
