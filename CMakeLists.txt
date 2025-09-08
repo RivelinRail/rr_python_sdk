@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # pybind11
-find_package(pybind11 CONFIG REQUIRED)
+add_subdirectory(extern/pybind11)
+#find_package(pybind11 CONFIG REQUIRED)
 
 # Add submodule include
 add_subdirectory(extern/device-protocol)
