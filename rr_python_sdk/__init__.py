@@ -72,7 +72,7 @@ def attach_send_methods(cls, msg_map):
 
                 self.ser.write(frame)
         else:
-            def send_method(self, payload, enum_name = enum_name):
+            def send_method(self, payload, enum_name = enum_name, py_struct_name = py_struct_name):
                 if not isinstance(payload, getattr(cpp, py_struct_name)):
                     raise ValueError(f"{method_name} can only be called with an argument of type {py_struct_name}")
                 
