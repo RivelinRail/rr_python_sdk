@@ -26,9 +26,9 @@ setup(
     description="Python functions for interfacing with the measurement head",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/mikeWShef/RR_measurment_head_python",
+    url="https://github.com/RivelinRail/rr_python_sdk",
     project_urls={
-        "Bug Tracker": "https://github.com/mikeWShef/RR_measurment_head_python/issues",
+        "Bug Tracker": "https://github.com/RivelinRail/rr_python_sdk/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",

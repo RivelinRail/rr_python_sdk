@@ -36,7 +36,7 @@ Provides both high-level Python APIs for sending/receiving messages and access t
 Clone the repository:
 
 ```bash
-git clone --recurse-submodules https://github.com/mikeWShef/RR_measurment_head_python.git
+git clone --recurse-submodules https://github.com/RivelinRail/rr_python_sdk.git
 cd RR_measurment_head_python
 ```
 
