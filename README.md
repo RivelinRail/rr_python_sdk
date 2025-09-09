@@ -50,32 +50,21 @@ pip install .
 
 ```python
 
-from rr_python_sdk import mh_protocol_py as cpp
-from rr_python_sdk.wrapper import MeasurementHead
+from rr_python_sdk import cpp, MeasurementHead
 
-# --- Initialize serial connection ---
+# --- Initialize serial connection and handshake with the device ---
 head = MeasurementHead("COM3")  # Replace with your serial port
 
-# --- Send a handshake ---
-handshake = cpp.HandshakeToDevicePayload()
-handshake.major = 1
-handshake.minor = 2
-handshake.serial = 34
-
-head.send_handshake(handshake)
+# --- Send a message with no data ---
+head.home()
 
 # --- Read a message ---
-msg = head.read()
-print(msg.type)   # MsgType_ToHost enum
-print(msg.data)   # Payload instance
+message = head.read()
 
-# --- Send other messages dynamically ---
-force_payload = cpp.ForceDataPoint()
-force_payload.f_normal_mn = 100
-force_payload.f_tangential_mn = 50
-force_payload.millis_since_start = 500
-
-head.send_force_data_point(force_payload)
+# --- Send a message with data ---
+payload = cpp.JogPayload
+payload.distance_mm = 1.0
+head.jog_motor(payload)
 
 # --- Close connection ---
 head.close()

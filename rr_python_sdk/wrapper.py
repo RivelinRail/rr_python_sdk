@@ -8,7 +8,7 @@ from types import MethodType
 class MeasurementHead:
     def __init__(self, port: str, baudrate: int = 1_000_000):
         self.ser = serial.Serial(port, baudrate=baudrate, timeout=1)
-        
+        payload = cpp.HandshakeToDevicePayload()
 
     def close(self):
         self.ser.close()
