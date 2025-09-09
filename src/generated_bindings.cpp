@@ -185,6 +185,7 @@ py::enum_<status_bits_t>(m, "status_bits_t")
 py::class_<empty_payload_t>(m, "EmptyPayload")
     .def(py::init<>())
     .def("serialize", [](empty_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](empty_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<date_t>(m, "Date")
@@ -192,6 +193,7 @@ py::class_<date_t>(m, "Date")
     .def_readwrite("day_y", &date_t::day_y)
     .def_readwrite("year", &date_t::year)
     .def("serialize", [](date_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](date_t& s) { return sizeof(s); })
     ;
 
 py::class_<motor_config_t>(m, "MotorConfig")
@@ -207,6 +209,7 @@ py::class_<motor_config_t>(m, "MotorConfig")
     .def_readwrite("home_speed", &motor_config_t::home_speed)
     .def_readwrite("homing_timeout", &motor_config_t::homing_timeout)
     .def("serialize", [](motor_config_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](motor_config_t& s) { return sizeof(s); })
     ;
 
 py::class_<pid_config_t>(m, "PidConfig")
@@ -221,6 +224,7 @@ py::class_<pid_config_t>(m, "PidConfig")
     .def_readwrite("n_settle", &pid_config_t::n_settle)
     .def_readwrite("touch_force_mn", &pid_config_t::touch_force_mn)
     .def("serialize", [](pid_config_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](pid_config_t& s) { return sizeof(s); })
     ;
 
 py::class_<load_cell_config_t>(m, "LoadCellConfig")
@@ -236,6 +240,7 @@ py::class_<load_cell_config_t>(m, "LoadCellConfig")
     .def_readwrite("max_errors", &load_cell_config_t::max_errors)
     .def_readwrite("error_on_calibration", &load_cell_config_t::error_on_calibration)
     .def("serialize", [](load_cell_config_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](load_cell_config_t& s) { return sizeof(s); })
     ;
 
 py::class_<accelerometer_config_t>(m, "AccelerometerConfig")
@@ -246,6 +251,7 @@ py::class_<accelerometer_config_t>(m, "AccelerometerConfig")
     .def_readwrite("calibration_duration", &accelerometer_config_t::calibration_duration)
     .def_readwrite("error_on_calibration", &accelerometer_config_t::error_on_calibration)
     .def("serialize", [](accelerometer_config_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](accelerometer_config_t& s) { return sizeof(s); })
     ;
 
 py::class_<config_data_t>(m, "ConfigData")
@@ -257,6 +263,7 @@ py::class_<config_data_t>(m, "ConfigData")
     .def_readwrite("accelerometer", &config_data_t::accelerometer)
     .def_readwrite("config_update_timeout", &config_data_t::config_update_timeout)
     .def("serialize", [](config_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](config_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<serial_number_t>(m, "SerialNumber")
@@ -270,6 +277,7 @@ py::class_<serial_number_t>(m, "SerialNumber")
     .def_readwrite("BatchNumber", &serial_number_t::BatchNumber)
     .def_readwrite("DeviceNumber", &serial_number_t::DeviceNumber)
     .def("serialize", [](serial_number_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](serial_number_t& s) { return sizeof(s); })
     ;
 
 py::class_<handshake_to_device_payload_t>(m, "HandshakeToDevicePayload")
@@ -280,6 +288,7 @@ py::class_<handshake_to_device_payload_t>(m, "HandshakeToDevicePayload")
     .def_readwrite("minute", &handshake_to_device_payload_t::minute)
     .def_readwrite("second", &handshake_to_device_payload_t::second)
     .def("serialize", [](handshake_to_device_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](handshake_to_device_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<handshake_to_host_payload_t>(m, "HandshakeToHostPayload")
@@ -291,6 +300,7 @@ py::class_<handshake_to_host_payload_t>(m, "HandshakeToHostPayload")
     .def_readwrite("last_orientation_calibration_date", &handshake_to_host_payload_t::last_orientation_calibration_date)
     .def_readwrite("serial_number", &handshake_to_host_payload_t::serial_number)
     .def("serialize", [](handshake_to_host_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](handshake_to_host_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<device_info_t>(m, "DeviceInfo")
@@ -298,6 +308,7 @@ py::class_<device_info_t>(m, "DeviceInfo")
     .def_readwrite("handshake", &device_info_t::handshake)
     .def_readwrite("firmware", &device_info_t::firmware)
     .def("serialize", [](device_info_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](device_info_t& s) { return sizeof(s); })
     ;
 
 py::class_<force_data_point_t>(m, "ForceDataPoint")
@@ -307,6 +318,7 @@ py::class_<force_data_point_t>(m, "ForceDataPoint")
     .def_readwrite("f_tangential_mn", &force_data_point_t::f_tangential_mn)
     .def_readwrite("millis_since_start", &force_data_point_t::millis_since_start)
     .def("serialize", [](force_data_point_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](force_data_point_t& s) { return sizeof(s); })
     ;
 
 py::class_<acceleration_data_t>(m, "AccelerationData")
@@ -316,6 +328,7 @@ py::class_<acceleration_data_t>(m, "AccelerationData")
     .def_readwrite("z", &acceleration_data_t::z)
     .def_readwrite("t", &acceleration_data_t::t)
     .def("serialize", [](acceleration_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](acceleration_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<orientation_data_t>(m, "OrientationData")
@@ -323,30 +336,35 @@ py::class_<orientation_data_t>(m, "OrientationData")
     .def_readwrite("incline", &orientation_data_t::incline)
     .def_readwrite("roll", &orientation_data_t::roll)
     .def("serialize", [](orientation_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](orientation_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<angle_payload_t>(m, "AnglePayload")
     .def(py::init<>())
     .def_readwrite("angle_mrad", &angle_payload_t::angle_mrad)
     .def("serialize", [](angle_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](angle_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<set_force_payload_t>(m, "SetForcePayload")
     .def(py::init<>())
     .def_readwrite("force_mn", &set_force_payload_t::force_mn)
     .def("serialize", [](set_force_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](set_force_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<jog_payload_t>(m, "JogPayload")
     .def(py::init<>())
     .def_readwrite("distance_mm", &jog_payload_t::distance_mm)
     .def("serialize", [](jog_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](jog_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<data_rate_payload_t>(m, "DataRatePayload")
     .def(py::init<>())
     .def_readwrite("rate_hz", &data_rate_payload_t::rate_hz)
     .def("serialize", [](data_rate_payload_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](data_rate_payload_t& s) { return sizeof(s); })
     ;
 
 py::class_<load_cell_calibration_coef_t>(m, "LoadCellCalibrationCoef")
@@ -362,6 +380,7 @@ py::class_<load_cell_calibration_coef_t>(m, "LoadCellCalibrationCoef")
     .def_readwrite("OFFSET_T", &load_cell_calibration_coef_t::OFFSET_T)
     .def_readwrite("SOT_T", &load_cell_calibration_coef_t::SOT_T)
     .def("serialize", [](load_cell_calibration_coef_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](load_cell_calibration_coef_t& s) { return sizeof(s); })
     ;
 
 py::class_<load_cell_calibration_data_t>(m, "LoadCellCalibrationData")
@@ -369,6 +388,7 @@ py::class_<load_cell_calibration_data_t>(m, "LoadCellCalibrationData")
     .def_readwrite("coefficients", &load_cell_calibration_data_t::coefficients)
     .def_readwrite("date", &load_cell_calibration_data_t::date)
     .def("serialize", [](load_cell_calibration_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](load_cell_calibration_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<angle_calibration_data_t>(m, "AngleCalibrationData")
@@ -376,6 +396,7 @@ py::class_<angle_calibration_data_t>(m, "AngleCalibrationData")
     .def_readwrite("angle_offset_mrad", &angle_calibration_data_t::angle_offset_mrad)
     .def_readwrite("date", &angle_calibration_data_t::date)
     .def("serialize", [](angle_calibration_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](angle_calibration_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<orientation_calibration_data_t>(m, "OrientationCalibrationData")
@@ -383,6 +404,7 @@ py::class_<orientation_calibration_data_t>(m, "OrientationCalibrationData")
     .def_readwrite("orientation_offsets", &orientation_calibration_data_t::orientation_offsets)
     .def_readwrite("date", &orientation_calibration_data_t::date)
     .def("serialize", [](orientation_calibration_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](orientation_calibration_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<calibration_data_t>(m, "CalibrationData")
@@ -392,6 +414,7 @@ py::class_<calibration_data_t>(m, "CalibrationData")
     .def_readwrite("orientation", &calibration_data_t::orientation)
     .def_readwrite("angle", &calibration_data_t::angle)
     .def("serialize", [](calibration_data_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](calibration_data_t& s) { return sizeof(s); })
     ;
 
 py::class_<load_cell_calibration_point_t>(m, "LoadCellCalibrationPoint")
@@ -402,6 +425,7 @@ py::class_<load_cell_calibration_point_t>(m, "LoadCellCalibrationPoint")
     .def_readwrite("temperature_raw", &load_cell_calibration_point_t::temperature_raw)
     .def_readwrite("date", &load_cell_calibration_point_t::date)
     .def("serialize", [](load_cell_calibration_point_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](load_cell_calibration_point_t& s) { return sizeof(s); })
     ;
 
 py::class_<force_calib_true_values_t>(m, "ForceCalibTrueValues")
@@ -409,12 +433,14 @@ py::class_<force_calib_true_values_t>(m, "ForceCalibTrueValues")
     .def_readwrite("true_force_mN", &force_calib_true_values_t::true_force_mN)
     .def_readwrite("true_temperature_C", &force_calib_true_values_t::true_temperature_C)
     .def("serialize", [](force_calib_true_values_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](force_calib_true_values_t& s) { return sizeof(s); })
     ;
 
 py::class_<orientation_calib_info_t>(m, "OrientationCalibInfo")
     .def(py::init<>())
     .def_readwrite("number", &orientation_calib_info_t::number)
     .def("serialize", [](orientation_calib_info_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](orientation_calib_info_t& s) { return sizeof(s); })
     ;
 
 py::class_<firmware_update_start_t>(m, "FirmwareUpdateStart")
@@ -423,6 +449,7 @@ py::class_<firmware_update_start_t>(m, "FirmwareUpdateStart")
     .def_readwrite("chunk_size", &firmware_update_start_t::chunk_size)
     .def_readwrite("total_chunks", &firmware_update_start_t::total_chunks)
     .def("serialize", [](firmware_update_start_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](firmware_update_start_t& s) { return sizeof(s); })
     ;
 
 py::class_<firmware_update_chunk_t>(m, "FirmwareUpdateChunk")
@@ -430,10 +457,12 @@ py::class_<firmware_update_chunk_t>(m, "FirmwareUpdateChunk")
     .def_readwrite("offset", &firmware_update_chunk_t::offset)
     .def_readwrite("valid_bytes", &firmware_update_chunk_t::valid_bytes)
     .def("serialize", [](firmware_update_chunk_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](firmware_update_chunk_t& s) { return sizeof(s); })
     ;
 
 py::class_<firmware_update_finalise_t>(m, "FirmwareUpdateFinalise")
     .def(py::init<>())
     .def_readwrite("crc", &firmware_update_finalise_t::crc)
     .def("serialize", [](firmware_update_finalise_t& s) { return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); })
+    .def("sizeof", [](firmware_update_finalise_t& s) { return sizeof(s); })
     ;

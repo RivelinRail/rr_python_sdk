@@ -67,6 +67,7 @@ def main():
         
         # add a serialize method
         out_lines.append('    .def("serialize", []({0}& s) {{ return py::bytes(reinterpret_cast<const char*>(&s), sizeof(s)); }})'.format(struct_name))
+        out_lines.append('    .def("sizeof", []({0}& s) {{ return sizeof(s); }})'.format(struct_name))
         out_lines.append('    ;\n')
 
     Path("src/generated_bindings.cpp").write_text("\n".join(out_lines))
