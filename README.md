@@ -62,7 +62,7 @@ head.home()
 message = head.read()
 
 # --- Send a message with data ---
-payload = cpp.JogPayload
+payload = cpp.JogPayload()
 payload.distance_mm = 1.0
 head.jog_motor(payload)
 

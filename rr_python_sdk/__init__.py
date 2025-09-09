@@ -69,14 +69,14 @@ def attach_send_methods(cls, msg_map):
                 # Compute CRC16 over TYPE only
                 crc = cpp.crc16_ccitt(frame[cpp.N_FRAMING_START_BYTES:])
                 frame += bytes([ (crc >> 8) & 0xFF, crc & 0xFF ])
-
+                
                 self.ser.write(frame)
         else:
-            def send_method(self, payload, enum_name = enum_name, py_struct_name = py_struct_name):
+            def send_method(self, payload, enum_name = enum_name, py_struct_name = py_struct_name, method_name = method_name):
                 if not isinstance(payload, getattr(cpp, py_struct_name)):
-                    raise ValueError(f"{method_name} can only be called with an argument of type {py_struct_name}")
+                    raise ValueError(f"{method_name} can only be called with an argument of type {py_struct_name}, got {type(payload)}")
                 
-                msg_enum = getattr(cpp, enum_name)
+                msg_enum = getattr(cpp.MsgType_ToDevice, enum_name)
                 frame = bytes([cpp.SYNC_BYTE]*cpp.N_FRAMING_START_BYTES + [msg_enum]) + payload.serialize()
 
                 crc = cpp.crc16_ccitt(frame[cpp.N_FRAMING_START_BYTES:])
