@@ -3,8 +3,9 @@
 from .wrapper import MeasurementHead, cpp
 from pathlib import Path
 import re
-from types import MethodType
 from collections import namedtuple
+import warnings
+import time
 
 # --- Helpers from wrapper.py ---
 def snake_to_camel_case(name: str) -> str:
@@ -32,17 +33,22 @@ def camel_to_snake_case(s1):
 
 
 # --- Parse MSG_INFO_TO_DEVICE macros ---
-MSG_INFO_RE = re.compile(r'MSG_INFO_TO_DEVICE\s*\(\s*([\w:]+)\s*,\s*([\w:]+)\s*\)')
+MSG_INFO_TO_DEVICE_RE = re.compile(r'MSG_INFO_TO_DEVICE\s*\(\s*([\w:]+)\s*,\s*([\w:]+)\s*\)')
+MSG_INFO_TO_HOST_RE = re.compile(r'MSG_INFO_TO_HOST\s*\(\s*([\w:]+)\s*,\s*([\w:]+)\s*\)')
 
-def parse_msg_info(header_path: Path, byte_keys = False):
+def parse_msg_info(header_path: Path, MSG_INFO_RE, enum_keys = False):
     text = header_path.read_text()
     msg_map = {}
     for enum_name, payload_name in MSG_INFO_RE.findall(text):
+        if enum_name == "MSG_TYPE":
+            continue
         py_name = snake_to_camel_case(payload_name.split("::")[-1])
-        if (byte_keys):
+        if (enum_keys):
             try:
-                msg_map[int(getattr(cpp.MsgType_ToHost, enum_name))] = py_name
+                enum_name = enum_name.split("::")[-1]
+                msg_map[getattr(cpp.MsgType_ToHost, enum_name)] = py_name
             except ValueError:
+                print("could not assign", enum_name, py_name)
                 pass
         else:
             msg_map[enum_name] = py_name
@@ -50,14 +56,11 @@ def parse_msg_info(header_path: Path, byte_keys = False):
 
 # --- Attach send methods at import ---
 header_device = Path(__file__).resolve().parents[1] / "extern/device-protocol/include/protocol/msg_info_to_device.hpp"
-msg_map_to_device = parse_msg_info(header_device)
+msg_map_to_device = parse_msg_info(header_device, MSG_INFO_TO_DEVICE_RE)
 
 def attach_send_methods(cls, msg_map):
     for enum_name, py_struct_name in msg_map.items():
         enum_name = enum_name.split("::")[-1]
-
-        if enum_name == "MSG_TYPE":
-            continue
 
         method_name = camel_to_snake_case(enum_name)
 
@@ -69,7 +72,7 @@ def attach_send_methods(cls, msg_map):
                 # Compute CRC16 over TYPE only
                 crc = cpp.crc16_ccitt(frame[cpp.N_FRAMING_START_BYTES:])
                 frame += bytes([ (crc >> 8) & 0xFF, crc & 0xFF ])
-                
+
                 self.ser.write(frame)
         else:
             def send_method(self, payload, enum_name = enum_name, py_struct_name = py_struct_name, method_name = method_name):
@@ -90,7 +93,7 @@ attach_send_methods(MeasurementHead, msg_map_to_device)
 
 # --- Attach receive methods ---
 header_host = Path(__file__).resolve().parents[1] / "extern/device-protocol/include/protocol/msg_info_to_host.hpp"
-msg_map_to_host = parse_msg_info(header_host, True)
+msg_map_to_host = parse_msg_info(header_host, MSG_INFO_TO_HOST_RE, True)
 
 Message = namedtuple("Message", ["type", "data"])
 
@@ -118,18 +121,22 @@ def read(self) -> Message:
     try:
         cpp_msg_type = cpp.MsgType_ToHost(msg_type)
     except ValueError:
+        warnings.warn(f"Message read failed, unknown type, raw recieve type: {msg_type}")
         return Message(cpp.MsgType_ToHost.Unknown, None)
 
     if cpp_msg_type not in msg_map_to_host:
+        warnings.warn(f"Message read failed, unknown type, raw recieve type: {msg_type}")
         return Message(cpp.MsgType_ToHost.Unknown, None)
 
     # --- Determine payload length ---
     struct_cls = getattr(cpp, msg_map_to_host[cpp_msg_type])
-    length = struct_cls.sizeof()  # pybind-bound method
+    length = struct_cls().sizeof()
 
     # --- Read payload + CRC16 ---
     remaining_bytes = self.ser.read(length + cpp.N_CHECKSUM_BYTES)
     if len(remaining_bytes) < length + cpp.N_CHECKSUM_BYTES:
+        warnings.warn(f"Message read failed, framing error, recieve type: {msg_type}, data: {remaining_bytes},"
+                      f" expected {len(remaining_bytes)}, recieved {length + cpp.N_CHECKSUM_BYTES}")
         return Message(cpp.MsgType_ToHost.FramingError, bytes([msg_type]) + remaining_bytes)
 
     payload_bytes = remaining_bytes[:length]
@@ -142,6 +149,8 @@ def read(self) -> Message:
     crc_input = bytes([msg_type]) + payload_bytes
     calc_crc = cpp.crc16_ccitt(crc_input)
     if rx_crc != calc_crc:
+        warnings.warn(f"Message read failed, crc failed, recieve type: {msg_type}, data: {remaining_bytes},"
+                      f" calculated crc {calc_crc}, received crc {rx_crc}")
         return Message(cpp.MsgType_ToHost.CRCError, bytes([msg_type]) + remaining_bytes)
 
     # --- Deserialize payload ---
@@ -149,14 +158,19 @@ def read(self) -> Message:
         return Message(cpp_msg_type, struct_cls())  # empty payload
     return Message(cpp_msg_type, struct_cls.deserialize(payload_bytes))
 
-def read_all(self):
+def read_all(self, until_type = cpp.MsgType_ToHost.NoMessage, timeout = 1.0):
     """Read everything in buffer, return list of parsed structs."""
+    deadline = time.time() + timeout
     messages = []
-    while True:
+    while time.time() < deadline:
         msg = self.read()
-        if msg is None:
+        if msg.type == cpp.MsgType_ToHost.NoMessage:
+            # Small sleep to avoid busy-wait spinning
+            time.sleep(0.001)
+        else:
+            messages.append(msg)
+        if msg.type == until_type:
             break
-        messages.append(msg)
     return messages
 
 setattr(MeasurementHead, "read", read)

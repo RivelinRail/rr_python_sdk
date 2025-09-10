@@ -17,6 +17,9 @@ PYBIND11_MODULE(mh_protocol_py, m) {
     m.attr("SYNC_BYTE") = SYNC_BYTE;
     m.attr("N_CHECKSUM_BYTES") = N_CHECKSUM_BYTES;
     m.attr("MIN_MESSAGE_LENGTH") = MIN_MESSAGE_LENGTH;
+    
+    //m.attr("protocol_version_minor") = version.minor;
+    //m.attr("protocol_version_patch") = version.patch;
 
     m.def("crc16_ccitt", [](py::bytes b) -> uint16_t {
         std::string s = b; // py::bytes converts to std::string
@@ -27,7 +30,5 @@ PYBIND11_MODULE(mh_protocol_py, m) {
 
     #include "generated_bindings.cpp"      // enums + structs
 
-    // expose as Python functions
-    //m.def("payload_length_to_device", &payload_length_to_device);
-    //m.def("payload_length_to_host", &payload_length_to_host);
+    m.attr("protocol_version") = version;
 }

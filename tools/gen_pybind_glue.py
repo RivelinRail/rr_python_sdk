@@ -42,7 +42,8 @@ def cpp_to_python_name(name: str) -> str:
 def main():
     root = Path(__file__).resolve().parents[1]
     # adjust to your header locations
-    text = (root / "extern" / "device-protocol" / "include" / "protocol" / "message_types.hpp").read_text()
+    text = (root / "extern" / "device-protocol" / "include" / "protocol" / "version.hpp").read_text()
+    text += (root / "extern" / "device-protocol" / "include" / "protocol" / "message_types.hpp").read_text()
     text += (root / "extern" /"device-protocol" / "include" / "protocol" / "measurement_head_types.hpp").read_text()
 
     enums = parse_enums(text)
