@@ -4,8 +4,14 @@ import datetime
 
 # --- MeasurementHead class ---
 class MeasurementHead:
+    handshake_response = None
+    ser = None
+
     def __init__(self, port: str, baudrate: int = 1_000_000):
         self.ser = serial.Serial(port, baudrate=baudrate, timeout=1)
+        self.shakehands()
+
+    def shakehands(self):
         self.ser.read_all()
 
         now = datetime.datetime.now()
@@ -24,15 +30,18 @@ class MeasurementHead:
         self.handshake(payload)
 
         # (Optional) wait for handshake response from device
-        resp = self.read()
-        if resp.type == cpp.MsgType_ToHost.Handshake:
-            print("Handshake acknowledged:", resp.data)
-        elif resp.type == cpp.MsgType_ToHost.ERR:
-            print("Error response received:", resp.type, resp.data.reason)
-        elif resp.type == cpp.MsgType_ToHost.FaultData:
-            print("Device fault", resp.data.fault_status)
-        else:
-            print("Unknown response received:", resp.type, resp.data)
+        resps = self.read_all(cpp.MsgType_ToHost.Handshake, 3)
+        for resp in resps:
+            if resp.type == cpp.MsgType_ToHost.Handshake:
+                print("Handshake acknowledged:", resp.data)
+                self.handshake_response = resp.data
+            elif resp.type == cpp.MsgType_ToHost.ERR:
+                print("Error response received:", resp.type, resp.data.reason)
+            elif resp.type == cpp.MsgType_ToHost.FaultData:
+                print("Device fault", resp.data.fault_status)
+            else:
+                print("Unknown response received:", resp.type, resp.data)
+
 
     def close(self):
         self.ser.close()
