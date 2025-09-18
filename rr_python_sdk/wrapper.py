@@ -1,5 +1,6 @@
 from . import mh_protocol_py as cpp
 import serial
+import serial.tools.list_ports
 import datetime
 
 # --- MeasurementHead class ---
@@ -7,9 +8,21 @@ class MeasurementHead:
     handshake_response = None
     ser = None
 
-    def __init__(self, port: str, baudrate: int = 1_000_000):
+    def __init__(self, port: str = None, baudrate: int = 1_000_000):
+        if port is None:
+            port = self._get_serial_port()
+        if port is None:
+            raise ValueError("Could not detect device")
         self.ser = serial.Serial(port, baudrate=baudrate, timeout=1)
         self.shakehands()
+
+    def _get_serial_port():
+        ports = serial.tools.list_ports.comports()
+        for p in ports:
+            print(p.description, p.hwid, p.interface, p.vid)
+            if "USB Serial Port" in p.description and p.vid == 12346:
+                return p.device
+        return None
 
     def shakehands(self):
         self.ser.read_all()
