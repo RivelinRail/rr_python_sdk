@@ -2,6 +2,7 @@ from . import mh_protocol_py as cpp
 import serial
 import serial.tools.list_ports
 import datetime
+import warnings
 
 # --- MeasurementHead class ---
 class MeasurementHead:
@@ -13,14 +14,16 @@ class MeasurementHead:
             port = self._get_serial_port()
         if port is None:
             raise ValueError("Could not detect device")
-        self.ser = serial.Serial(port, baudrate=baudrate, timeout=1)
-        self.shakehands()
+        self.ser = serial.Serial(port, baudrate=baudrate, timeout=1, write_timeout=1)
+        if not self.shakehands():
+            warnings.warn("Handshake not acknowledged, device not ready")
 
-    def _get_serial_port():
+    def _get_serial_port(self):
         ports = serial.tools.list_ports.comports()
         for p in ports:
-            print(p.description, p.hwid, p.interface, p.vid)
-            if "USB Serial Port" in p.description and p.vid == 12346:
+            print(p.description, p.vid)
+            if "USB Serial Port" in p.description and p.vid == 1027:
+                print(f"Auto detected: {p.description}")
                 return p.device
         return None
 
@@ -42,11 +45,12 @@ class MeasurementHead:
         # --- Send handshake ---
         self.handshake(payload)
 
-        # (Optional) wait for handshake response from device
+        ack = False
         resps = self.read_all(cpp.MsgType_ToHost.Handshake, 3)
         for resp in resps:
             if resp.type == cpp.MsgType_ToHost.Handshake:
                 print("Handshake acknowledged:", resp.data)
+                ack = True
                 self.handshake_response = resp.data
             elif resp.type == cpp.MsgType_ToHost.ERR:
                 print("Error response received:", resp.type, resp.data.reason)
@@ -54,6 +58,7 @@ class MeasurementHead:
                 print("Device fault", resp.data.fault_status)
             else:
                 print("Unknown response received:", resp.type, resp.data)
+        return ack
 
 
     def close(self):
