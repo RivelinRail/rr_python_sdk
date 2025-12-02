@@ -12,7 +12,7 @@ class CMakeBuild(build_ext):
         # 2. Configure and build CMake
         build_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "build")
         os.makedirs(build_dir, exist_ok=True)
-        subprocess.check_call(["cmake", "../", "-B", build_dir])
+        subprocess.check_call(["cmake", "./", "-B", build_dir])
         subprocess.check_call(["cmake", "--build", build_dir, "--config", "Release"])
 
 with open("README.md", "r", encoding="utf-8") as fhand:
