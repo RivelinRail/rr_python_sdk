@@ -12,7 +12,12 @@ class CMakeBuild(build_ext):
         # 2. Configure and build CMake
         build_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "build")
         os.makedirs(build_dir, exist_ok=True)
-        subprocess.check_call(["cmake", "./", "-B", build_dir])
+        subprocess.check_call([
+            "cmake", ".", 
+            "-B", build_dir,
+            "-G", "Ninja",
+            f"-DPython_EXECUTABLE={sys.executable}"
+        ])
         subprocess.check_call(["cmake", "--build", build_dir, "--config", "Release"])
 
 with open("README.md", "r", encoding="utf-8") as fhand:
@@ -36,6 +41,7 @@ setup(
     ],
     install_requires=["pyserial"],
     packages=["rr_python_sdk"],
+    ext_modules=[Extension("rr_python_sdk._dummy", sources=[])],
     cmdclass={"build_ext": CMakeBuild},
     python_requires=">=3.6",
 )
