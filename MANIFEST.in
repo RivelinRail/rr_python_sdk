@@ -1,0 +1,2 @@
+include tools/gen_pybind_glue.py
+recursive-include extern/device-protocol/include *.hpp *.h *.inl

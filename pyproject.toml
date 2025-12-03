@@ -11,7 +11,7 @@ name = "rr_python_sdk"
 version = "0.1.0"
 description = "Python functions for interfacing with the measurement head"
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 dependencies = ["pyserial"]
 authors = [{ name = "Mike Watson", email = "m.watson@rivelinrail.com" }]
 classifiers = [
@@ -34,13 +34,12 @@ sources = [
 ]
 include-dirs = [
     "extern/device-protocol/include",
-    "extern/pybind11/include",
 ]
 language = "c++"
 depends = ["src/generated_bindings.cpp"]
 
 [tool.setuptools.cmdclass]
-build_ext = "tools._build.BuildExt"
-build_py = "tools._build.BuildPy"
-sdist = "tools._build.SDist"
+build_ext = "rr_python_sdk._build.BuildExt"
+build_py = "rr_python_sdk._build.BuildPy"
+sdist = "rr_python_sdk._build.SDist"
 
