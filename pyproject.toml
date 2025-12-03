@@ -11,7 +11,7 @@ name = "rr_python_sdk"
 version = "0.1.0"
 description = "Python functions for interfacing with the measurement head"
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = ["pyserial"]
 authors = [{ name = "Mike Watson", email = "m.watson@rivelinrail.com" }]
 classifiers = [
