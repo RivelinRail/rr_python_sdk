@@ -1,6 +1,3 @@
 [submodule "extern/device-protocol"]
 	path = extern/device-protocol
 	url = https://github.com/RivelinRail/MeasurmentHeadProtocol.git
-[submodule "extern/pybind11"]
-	path = extern/pybind11
-	url = https://github.com/pybind/pybind11
