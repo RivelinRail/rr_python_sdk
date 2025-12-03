@@ -1,6 +1,6 @@
 # RR Measurement Head Python SDK
 
-Python package for interfacing with the Rivelin Rail measurement head device.  
+Python package for interfacing with the Rivelin Rail measurement head device.
 Provides both high-level Python APIs for sending/receiving messages and access to the underlying C++ protocol via pybind11.
 
 ---
@@ -20,10 +20,9 @@ Provides both high-level Python APIs for sending/receiving messages and access t
 ### Build Requirements
 
 - Python 3.6+
-- CMake >= 3.15
 - A C++17 compatible compiler
-- `pybind11` (handled via build dependencies)
-- `setuptools` and `wheel`
+- `pybind11` headers (vendored under `extern/pybind11`)
+- `setuptools` and `wheel` (PEP 517 build backend)
 
 ### Python Package Requirements
 
@@ -46,7 +45,7 @@ Install the package:
 pip install .
 ```
 
-## Usage 
+## Usage
 
 ```python
 
