@@ -1,6 +1,6 @@
 # RR Measurement Head Python SDK
 
-Python package for interfacing with the Rivelin Rail measurement head device.  
+Python package for interfacing with the Rivelin Rail measurement head device.
 Provides both high-level Python APIs for sending/receiving messages and access to the underlying C++ protocol via pybind11.
 
 ---
@@ -19,11 +19,9 @@ Provides both high-level Python APIs for sending/receiving messages and access t
 
 ### Build Requirements
 
-- Python 3.6+
-- CMake >= 3.15
-- A C++17 compatible compiler
-- `pybind11` (handled via build dependencies)
-- `setuptools` and `wheel`
+- Python 3.8+
+- A C++17 compatible compiler toolchain
+- `pip`, `setuptools`, `wheel`, and `pybind11` (automatically pulled in as build dependencies)
 
 ### Python Package Requirements
 
@@ -33,20 +31,37 @@ Provides both high-level Python APIs for sending/receiving messages and access t
 
 ## Installation
 
-Clone the repository:
+The release versions are available as Release artifacts from the [Github Releases](https://github.com/RivelinRail/rr_python_sdk/releases).
+Choose the appropriate zip file for your Operating System and architecture.
+
+After downloading the zip, unzip it and use the wheel matching your python version in the next step.
+
+### Install the published wheel
+
+```bash
+python -m pip install ./<wheel name>.whl
+```
+
+The published wheels already contain the compiled `mh_protocol_py` extension for common platforms.
+
+### Build from source
 
 ```bash
 git clone --recurse-submodules https://github.com/RivelinRail/rr_python_sdk.git
-cd RR_measurment_head_python
+cd rr_python_sdk
+
+# Option A: editable install for development
+python -m pip install --upgrade pip
+python -m pip install -e .
+
+# Option B: build distributable artifacts
+python -m pip install build
+python -m build
 ```
 
-Install the package:
+During the build step, the `tools/gen_pybind_glue.py` script runs automatically to regenerate `src/generated_bindings.cpp`, and setuptools uses pybind11's include paths provided by the dependency.
 
-```bash
-pip install .
-```
-
-## Usage 
+## Usage
 
 ```python
 

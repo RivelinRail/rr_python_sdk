@@ -1,3 +1,45 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "cmake", "pybind11"]
+requires = [
+    "setuptools>=68",
+    "wheel",
+    "pybind11",
+]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "rr_python_sdk"
+version = "0.1.0"
+description = "Python functions for interfacing with the measurement head"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.11"
+dependencies = ["pyserial"]
+authors = [{ name = "Mike Watson", email = "m.watson@rivelinrail.com" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/RivelinRail/rr_python_sdk"
+"Bug Tracker" = "https://github.com/RivelinRail/rr_python_sdk/issues"
+
+[tool.setuptools]
+packages = { find = { where = ["."], include = ["rr_python_sdk*"] } }
+
+[[tool.setuptools.ext-modules]]
+name = "rr_python_sdk.mh_protocol_py"
+sources = [
+    "src/bindings.cpp",
+    "extern/device-protocol/src/crc32.cpp",
+]
+include-dirs = [
+    "extern/device-protocol/include",
+]
+language = "c++"
+depends = ["src/generated_bindings.cpp"]
+
+[tool.setuptools.cmdclass]
+build_ext = "rr_python_sdk._build.BuildExt"
+build_py = "rr_python_sdk._build.BuildPy"
+sdist = "rr_python_sdk._build.SDist"
+
