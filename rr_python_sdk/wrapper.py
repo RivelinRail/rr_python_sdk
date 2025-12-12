@@ -3,13 +3,13 @@ import serial
 import serial.tools.list_ports
 import datetime
 import warnings
+from typing import Optional
 
 # --- MeasurementHead class ---
 class MeasurementHead:
     handshake_response = None
-    ser = None
 
-    def __init__(self, port: str = None, baudrate: int = 1_000_000):
+    def __init__(self, port: Optional[str] = None, baudrate: int = 1_000_000):
         if port is None:
             port = self._get_serial_port()
         if port is None:
