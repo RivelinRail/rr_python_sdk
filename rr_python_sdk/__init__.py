@@ -97,8 +97,12 @@ msg_map_to_host = parse_msg_info(header_host, MSG_INFO_TO_HOST_RE, True)
 
 Message = namedtuple("Message", ["type", "data"])
 
-def read(self) -> Message:
+def read(self, timeout = None) -> Message:
     """Read one message and return parsed struct or None."""
+    if timeout is not None:
+        self.ser.timeout = timeout
+    else:
+        self.ser.timeout = self.timeout
     # --- Wait for sync bytes ---
     while True:
         sync = self.ser.read(1)
@@ -158,12 +162,12 @@ def read(self) -> Message:
         return Message(cpp_msg_type, struct_cls())  # empty payload
     return Message(cpp_msg_type, struct_cls.deserialize(payload_bytes))
 
-def read_all(self, until_type = cpp.MsgType_ToHost.NoMessage, timeout = 1.0):
+def read_all(self, until_type = cpp.MsgType_ToHost.NoMessage, timeout = 1.0, read_timeout = 0.1):
     """Read everything in buffer, return list of parsed structs."""
     deadline = time.time() + timeout
     messages = []
     while time.time() < deadline:
-        msg = self.read()
+        msg = self.read(timeout = read_timeout)
         if msg.type == cpp.MsgType_ToHost.NoMessage:
             # Small sleep to avoid busy-wait spinning
             time.sleep(0.001)

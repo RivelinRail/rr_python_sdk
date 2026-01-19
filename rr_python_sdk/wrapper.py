@@ -9,12 +9,13 @@ from typing import Optional
 class MeasurementHead:
     handshake_response = None
 
-    def __init__(self, port: Optional[str] = None, baudrate: int = 1_000_000):
+    def __init__(self, port: Optional[str] = None, baudrate: int = 1_000_000, timeout = 1):
         if port is None:
             port = self._get_serial_port()
         if port is None:
             raise ValueError("Could not detect device")
-        self.ser = serial.Serial(port, baudrate=baudrate, timeout=1, write_timeout=1)
+        self.timeout = timeout
+        self.ser = serial.Serial(port, baudrate=baudrate, timeout = timeout, write_timeout=1)
         if not self.shakehands():
             warnings.warn("Handshake not acknowledged, device not ready")
 
@@ -54,8 +55,8 @@ class MeasurementHead:
                 self.handshake_response = resp.data
             elif resp.type == cpp.MsgType_ToHost.ERR:
                 print("Error response received:", resp.type, resp.data.reason)
-            elif resp.type == cpp.MsgType_ToHost.FaultData:
-                print("Device fault", resp.data.fault_status)
+            elif resp.type == cpp.MsgType_ToHost.NewFault:
+                print("Device fault", resp.data.reason)
             else:
                 print("Unknown response received:", resp.type, resp.data)
         return ack
