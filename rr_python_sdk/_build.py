@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -15,6 +16,23 @@ GLUE_SCRIPT = PROJECT_ROOT / "tools" / "gen_pybind_glue.py"
 
 def _generate_bindings() -> None:
     subprocess.check_call([sys.executable, str(GLUE_SCRIPT)], cwd=PROJECT_ROOT)
+
+
+def _copy_headers(build_root: Path) -> None:
+    """Copy public C++ headers into the built wheel for downstream use."""
+
+    src = PROJECT_ROOT / "extern" / "device-protocol" / "include"
+    if not src.exists():  # pragma: no cover - defensive guard for CI
+        raise FileNotFoundError(f"Missing header directory: {src}")
+
+    dst_root = build_root / "rr_python_sdk" / "include"
+    for header in src.rglob("*"):
+        if not header.is_file():
+            continue
+        rel = header.relative_to(src)
+        dst = dst_root / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(header, dst)
 
 
 class BuildExt(build_ext):
@@ -56,6 +74,7 @@ class BuildPy(build_py):
     def run(self) -> None:
         _generate_bindings()
         super().run()
+        _copy_headers(Path(self.build_lib))
 
 
 class SDist(sdist):
