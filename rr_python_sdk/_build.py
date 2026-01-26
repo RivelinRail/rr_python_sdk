@@ -24,6 +24,8 @@ def _copy_headers(build_root: Path) -> None:
     src = PROJECT_ROOT / "extern" / "device-protocol" / "include"
     if not src.exists():  # pragma: no cover - defensive guard for CI
         raise FileNotFoundError(f"Missing header directory: {src}")
+    if not src.is_dir():  # pragma: no cover - defensive guard for CI
+        raise NotADirectoryError(f"Expected header directory but found non-directory: {src}")
 
     # Preserve the existing include layout under rr_python_sdk/include for
     # downstream consumers, but also populate the extern/device-protocol/include
