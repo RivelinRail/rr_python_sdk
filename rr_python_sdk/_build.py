@@ -25,14 +25,21 @@ def _copy_headers(build_root: Path) -> None:
     if not src.exists():  # pragma: no cover - defensive guard for CI
         raise FileNotFoundError(f"Missing header directory: {src}")
 
-    dst_root = build_root / "rr_python_sdk" / "include"
+    # Preserve the existing include layout under rr_python_sdk/include for
+    # downstream consumers, but also populate the extern/device-protocol/include
+    # layout that the runtime uses to locate headers.
+    dst_roots = [
+        build_root / "rr_python_sdk" / "include",
+        build_root / "extern" / "device-protocol" / "include",
+    ]
     for header in src.rglob("*"):
         if not header.is_file():
             continue
         rel = header.relative_to(src)
-        dst = dst_root / rel
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(header, dst)
+        for dst_root in dst_roots:
+            dst = dst_root / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(header, dst)
 
 
 class BuildExt(build_ext):
