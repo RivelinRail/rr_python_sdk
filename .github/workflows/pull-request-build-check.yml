@@ -28,5 +28,5 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_PLATFORM: auto64
+          CIBW_ARCHS: auto64
           CIBW_SKIP: "*-musl*"

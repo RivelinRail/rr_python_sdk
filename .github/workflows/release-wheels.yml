@@ -31,7 +31,7 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-           CIBW_PLATFORM: auto64
+           CIBW_ARCHS: auto64
 
       - uses: actions/upload-artifact@v4
         if: startsWith(github.ref, 'refs/tags/')
